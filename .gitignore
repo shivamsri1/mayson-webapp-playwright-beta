@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Environment (never commit real credentials)
+.env
+.env.local
+.env.dev
+.env.prod
+
+# Test Reports
+reports/
+test-results/
+allure-results/
+
+# Playwright
+playwright-report/
