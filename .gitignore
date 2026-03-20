@@ -24,3 +24,6 @@ allure-results/
 
 # Playwright
 playwright-report/
+
+# Framework artifacts (logs, reports, screenshots)
+artifacts/

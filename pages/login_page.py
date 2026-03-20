@@ -1,14 +1,6 @@
-"""
-Login Page Object
-=================
-Contains all locators and actions for the Login page.
+"""Login page object (locators + actions + simple assertions)."""
 
-This follows the PAGE OBJECT MODEL (POM) pattern:
-  - Locators are defined in one place
-  - Actions (click, fill, etc.) are wrapped as methods
-  - Tests call these methods instead of using raw selectors
-"""
-
+import re
 from playwright.sync_api import Page, expect
 from core import config
 
@@ -22,6 +14,7 @@ class LoginPage:
     LOGIN_BUTTON = 'button[type="submit"], button:has-text("Login"), button:has-text("Sign in")'
     ERROR_MESSAGE = '.error-message, .alert-danger, [role="alert"], .text-danger'
     SIGNUP_LINK = 'a:has-text("Sign up"), a:has-text("Register"), a:has-text("Create account")'
+    LOGIN_PAGE_URL_RE = re.compile(r".*/auth/login.*")
 
     def __init__(self, page: Page):
         self.page = page
@@ -30,7 +23,7 @@ class LoginPage:
 
     def navigate(self):
         """Go to the login page."""
-        self.page.goto(config.login_url())
+        self.page.goto(config.login_url(), wait_until="networkidle")
 
     def fill_email(self, email: str):
         """Type email into the email field."""
@@ -61,6 +54,14 @@ class LoginPage:
     def expect_error_visible(self):
         """Verify that an error message is visible using Playwright expect."""
         expect(self.page.locator(self.ERROR_MESSAGE).first).to_be_visible()
+
+    def expect_on_login_page(self) -> None:
+        """Login page URL should still be shown."""
+        expect(self.page).to_have_url(self.LOGIN_PAGE_URL_RE)
+
+    def expect_redirected_from_login(self) -> None:
+        """Login should redirect user away from /auth/login."""
+        expect(self.page).not_to_have_url(self.LOGIN_PAGE_URL_RE)
 
     def click_signup_link(self):
         """Click the link to go to the signup page."""

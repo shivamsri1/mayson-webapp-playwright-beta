@@ -9,6 +9,7 @@ It sets up:
 """
 
 import pytest
+import os
 from playwright.sync_api import sync_playwright
 from core import config as settings
 
@@ -35,6 +36,9 @@ def pytest_html_report_title(report):
 def pytest_configure(config):
     """Update pytest-html report environment metadata."""
     env_name = config.getoption("--env")
+    # Load env before test modules import data/constants.
+    if os.environ.get("_MAYSON_ENV_LOADED") != env_name:
+        settings.load_environment(env_name)
     env_display = "Pro" if env_name == "prod" else "Dev"
     
     if hasattr(config, "stash"):
@@ -54,7 +58,12 @@ def pytest_configure(config):
 def load_env(request):
     """Load the correct .env file based on --env flag."""
     env_name = request.config.getoption("--env")
-    settings.load_environment(env_name)
+    if os.environ.get("_MAYSON_ENV_LOADED") != env_name:
+        settings.load_environment(env_name)
+
+    # If user wants a visible browser, override the env-driven setting.
+    if request.config.getoption("--headed"):
+        os.environ["HEADLESS"] = "false"
 
 
 @pytest.fixture(scope="session")

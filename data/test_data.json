@@ -1,1 +1,84 @@
-{}
+{
+  "LOGIN_VALID": {
+    "email_id": "shivam@yopmail.com",
+    "password": "Pass@9988"
+  },
+  "LOGIN_WRONG_PASSWORD": {
+    "email_id": "shivam@yopmail.com",
+    "password": "DefinitelyWrong@999"
+  },
+  "LOGIN_UNREGISTERED_EMAIL": {
+    "email_id": "unregistered+login@yopmail.com",
+    "password": "Pass@9988"
+  },
+  "LOGIN_EMPTY": {
+    "email_id": "",
+    "password": ""
+  },
+  "LOGIN_INVALID_EMAIL_FORMAT": {
+    "email_id": "not-an-email",
+    "password": "Pass@9988"
+  },
+
+  "SIGNUP_VALID": {
+    "first_name": "Mayson",
+    "last_name": "Tester",
+    "email_id": "newuser+signup@yopmail.com",
+    "password": "Pass@9988",
+    "password_repeat": "Pass@9988"
+  },
+  "SIGNUP_EXISTING_EMAIL": {
+    "first_name": "Mayson",
+    "last_name": "Tester",
+    "email_id": "shivam@yopmail.com",
+    "password": "Pass@9988",
+    "password_repeat": "Pass@9988"
+  },
+  "SIGNUP_MISMATCHED_PASSWORDS": {
+    "first_name": "Mayson",
+    "last_name": "Tester",
+    "email_id": "newuser+signup2@yopmail.com",
+    "password": "Pass@9988",
+    "password_repeat": "DifferentPassword@123"
+  },
+  "SIGNUP_EMPTY": {
+    "first_name": "",
+    "last_name": "",
+    "email_id": "",
+    "password": "",
+    "password_repeat": ""
+  },
+  "SIGNUP_WEAK_PASSWORD": {
+    "first_name": "Mayson",
+    "last_name": "Tester",
+    "email_id": "newuser+signup3@yopmail.com",
+    "password": "123",
+    "password_repeat": "123"
+  },
+
+  "FORGOT_VALID": {
+    "email_id": "shivam@yopmail.com",
+    "password": "Pass@9988",
+    "password_repeat": "NewPassword@123"
+  },
+  "FORGOT_UNREGISTERED": {
+    "email_id": "unregistered+forgot@yopmail.com",
+    "password": "Pass@9988",
+    "password_repeat": "NewPassword@123"
+  },
+  "FORGOT_EMPTY": {
+    "email_id": "",
+    "password": "",
+    "password_repeat": ""
+  },
+  "FORGOT_INVALID_FORMAT": {
+    "email_id": "not-an-email",
+    "password": "Pass@9988",
+    "password_repeat": "NewPassword@123"
+  },
+  "FORGOT_MISMATCHED_PASSWORDS": {
+    "email_id": "shivam@yopmail.com",
+    "password": "NewPassword@123",
+    "password_repeat": "DifferentPassword@123"
+  }
+}

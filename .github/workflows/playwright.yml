@@ -27,25 +27,28 @@ jobs:
     - name: Ensure browsers are installed
       run: playwright install chromium --with-deps
 
-    - name: Create basic .env.dev file from example
+    - name: Ensure report output folder exists
+      run: mkdir -p artifacts/reports
+
+    - name: Create `config/.env.dev` for CI
       run: |
-        # Create a dummy .env.dev if you need some structural vars,
-        # or rely completely on GitHub Secrets
-        cp .env.dev.example .env.dev
-        echo "VALID_EMAIL=${{ secrets.VALID_EMAIL }}" >> .env.dev
-        echo "VALID_PASSWORD=${{ secrets.VALID_PASSWORD }}" >> .env.dev
+        # `core.config.load_environment()` expects env files at `config/.env.<env_name>`
+        # so we generate `config/.env.dev` from GitHub Secrets.
+        mkdir -p config
+        echo "BASE_URL=${{ secrets.BASE_URL }}" > config/.env.dev
+        echo "VALID_EMAIL=${{ secrets.VALID_EMAIL }}" >> config/.env.dev
+        echo "VALID_PASSWORD=${{ secrets.VALID_PASSWORD }}" >> config/.env.dev
+        echo "HEADLESS=true" >> config/.env.dev
+        echo "SLOW_MO=0" >> config/.env.dev
+        echo "TIMEOUT=30000" >> config/.env.dev
 
     - name: Run Playwright tests
-      run: pytest --env dev --html=reports/report.html --self-contained-html
-      env:
-        # You can also pass secrets directly to the environment
-        VALID_EMAIL: ${{ secrets.VALID_EMAIL }}
-        VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
+      run: pytest --env dev --html=artifacts/reports/report.html --self-contained-html
 
     - name: Upload HTML report
       uses: actions/upload-artifact@v4
       if: always()
       with:
         name: playwright-report
-        path: reports/report.html
+        path: artifacts/reports/report.html
         retention-days: 7

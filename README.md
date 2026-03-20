@@ -164,10 +164,10 @@ pytest --env dev
 ### HTML report
 
 ```bash
-pytest --env dev --html=reports/report.html --self-contained-html
+pytest --env dev --html=artifacts/reports/report.html --self-contained-html
 ```
 
-You can move reports under `artifacts/reports/` if you prefer; just update the path in the command and CI workflow.
+Reports are generated under `artifacts/reports/`.
 
 ---
 

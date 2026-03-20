@@ -24,7 +24,10 @@ def load_environment(env_name: str = "dev"):
 
     # Load the .env file into os.environ
     load_dotenv(env_file, override=True)
-    print(f"\n✅ Loaded environment: {env_name} ({env_file})")
+    # Mark env as loaded so other modules/fixtures can avoid reloading.
+    os.environ["_MAYSON_ENV_LOADED"] = env_name
+    # Keep output ASCII-only for Windows consoles.
+    print(f"\nLoaded environment: {env_name} ({env_file})")
 
 
 def get(key: str, default: str = "") -> str:
@@ -38,13 +41,23 @@ def base_url() -> str:
     return get("BASE_URL")
 
 def login_url() -> str:
-    return get("LOGIN_URL")
+    # Allow overriding per-env via LOGIN_URL, but fall back to a convention.
+    url = get("LOGIN_URL")
+    if url:
+        return url
+    return base_url().rstrip("/") + "/auth/login"
 
 def signup_url() -> str:
-    return get("SIGNUP_URL")
+    url = get("SIGNUP_URL")
+    if url:
+        return url
+    return base_url().rstrip("/") + "/auth/signup"
 
 def forgot_password_url() -> str:
-    return get("FORGOT_PASSWORD_URL")
+    url = get("FORGOT_PASSWORD_URL")
+    if url:
+        return url
+    return base_url().rstrip("/") + "/auth/forget-password"
 
 def valid_email() -> str:
     return get("VALID_EMAIL")
