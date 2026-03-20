@@ -31,13 +31,38 @@ jobs:
       run: mkdir -p artifacts/reports
 
     - name: Create `config/.env.dev` for CI
+      env:
+        BASE_URL: ${{ secrets.BASE_URL }}
+        LOGIN_URL: ${{ secrets.LOGIN_URL }}
+        SIGNUP_URL: ${{ secrets.SIGNUP_URL }}
+        FORGOT_PASSWORD_URL: ${{ secrets.FORGOT_PASSWORD_URL }}
+        VALID_EMAIL: ${{ secrets.VALID_EMAIL }}
+        VALID_PASSWORD: ${{ secrets.VALID_PASSWORD }}
       run: |
         # `core.config.load_environment()` expects env files at `config/.env.<env_name>`
         # so we generate `config/.env.dev` from GitHub Secrets.
         mkdir -p config
-        echo "BASE_URL=${{ secrets.BASE_URL }}" > config/.env.dev
-        echo "VALID_EMAIL=${{ secrets.VALID_EMAIL }}" >> config/.env.dev
-        echo "VALID_PASSWORD=${{ secrets.VALID_PASSWORD }}" >> config/.env.dev
+
+        # Fail fast if we don't have enough URL config to run tests.
+        if [ -z "$VALID_EMAIL" ] || [ -z "$VALID_PASSWORD" ]; then
+          echo "Missing secrets: VALID_EMAIL and/or VALID_PASSWORD" >&2
+          exit 1
+        fi
+
+        # Either provide BASE_URL OR provide all explicit URLs.
+        if [ -z "$BASE_URL" ]; then
+          if [ -z "$LOGIN_URL" ] || [ -z "$SIGNUP_URL" ] || [ -z "$FORGOT_PASSWORD_URL" ]; then
+            echo "Missing URL configuration: set secrets.BASE_URL or set all of (LOGIN_URL, SIGNUP_URL, FORGOT_PASSWORD_URL)" >&2
+            exit 1
+          fi
+        fi
+
+        echo "BASE_URL=$BASE_URL" > config/.env.dev
+        echo "LOGIN_URL=$LOGIN_URL" >> config/.env.dev
+        echo "SIGNUP_URL=$SIGNUP_URL" >> config/.env.dev
+        echo "FORGOT_PASSWORD_URL=$FORGOT_PASSWORD_URL" >> config/.env.dev
+        echo "VALID_EMAIL=$VALID_EMAIL" >> config/.env.dev
+        echo "VALID_PASSWORD=$VALID_PASSWORD" >> config/.env.dev
         echo "HEADLESS=true" >> config/.env.dev
         echo "SLOW_MO=0" >> config/.env.dev
         echo "TIMEOUT=30000" >> config/.env.dev
