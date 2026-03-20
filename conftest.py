@@ -10,7 +10,7 @@ It sets up:
 
 import pytest
 from playwright.sync_api import sync_playwright
-from config import settings
+from core import config as settings
 
 
 # ─── COMMAND LINE OPTIONS ─────────────────────────────────
@@ -58,23 +58,29 @@ def load_env(request):
 
 
 @pytest.fixture(scope="session")
-def browser():
-    """Launch ONE browser for the entire test session (faster)."""
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(
-            headless=settings.is_headless(),
-            slow_mo=settings.slow_mo(),
-            args=["--start-maximized"],
-        )
-        yield browser
-        browser.close()
+def browser_type_launch_args(browser_type_launch_args):
+    """Configure native playwright browser launch options."""
+    return {
+        **browser_type_launch_args,
+        "headless": settings.is_headless(),
+        "slow_mo": settings.slow_mo(),
+        "args": ["--start-maximized"],
+    }
 
 
-@pytest.fixture(scope="function")
-def page(browser):
-    """Create a NEW page (tab) for each test function (clean state)."""
-    context = browser.new_context(no_viewport=True)
-    page = context.new_page()
+@pytest.fixture(scope="session")
+def browser_context_args(browser_context_args):
+    """Configure native playwright context options (tracing, videos)."""
+    return {
+        **browser_context_args,
+        "no_viewport": True,
+    }
+
+
+@pytest.fixture(autouse=True)
+def _configure_timeouts(page):
+    """Set custom timeouts on the native page fixture."""
     page.set_default_timeout(settings.timeout())
-    yield page
-    context.close()
+    from playwright.sync_api import expect
+    expect.set_options(timeout=settings.timeout())
+

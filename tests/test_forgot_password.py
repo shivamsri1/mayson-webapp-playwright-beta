@@ -1,6 +1,6 @@
 import pytest
 from pages.forgot_password_page import ForgotPasswordPage
-from config.testdata import (
+from data.testdata import (
     FORGOT_VALID,
     FORGOT_UNREGISTERED,
     FORGOT_EMPTY,
@@ -27,8 +27,8 @@ class TestForgotPassword:
         )
 
         # Expected behavior: Success message is shown or navigated back to login
-        # You'll need to double-check exact actual behavior.
-        assert forgot_page.is_success_msg_visible() or "/auth/login" in page.url or forgot_page.is_error_msg_visible() is False
+        # Using expect to verify success message by default
+        forgot_page.expect_success_msg_visible()
 
     # ─── TC-02: NEGATIVE - Unregistered Email ────────────
 
@@ -44,7 +44,7 @@ class TestForgotPassword:
 
         # Usually, systems should show an error, or just a generic success message to prevent user enumeration
         # Let's verify form doesn't crash
-        expect(page).to_have_url(re.compile(r".*/auth/forget-password.*"), timeout=5000)
+        expect(page).to_have_url(re.compile(r".*/auth/forget-password.*"))
 
     # ─── TC-03: NEGATIVE - Empty Form ────────────────────
 
@@ -59,7 +59,7 @@ class TestForgotPassword:
         )
 
         # Should stay on the same page with validation errors
-        expect(page).to_have_url(re.compile(r".*/auth/forget-password.*"), timeout=5000)
+        expect(page).to_have_url(re.compile(r".*/auth/forget-password.*"))
 
     # ─── TC-04: NEGATIVE - Invalid Email Format ──────────
 
@@ -73,7 +73,7 @@ class TestForgotPassword:
             FORGOT_INVALID_FORMAT["password_repeat"]
         )
 
-        expect(page).to_have_url(re.compile(r".*/auth/forget-password.*"), timeout=5000)
+        expect(page).to_have_url(re.compile(r".*/auth/forget-password.*"))
     
     # ─── TC-05: NEGATIVE - Mismatched Passwords ──────────
 
@@ -87,7 +87,7 @@ class TestForgotPassword:
             FORGOT_MISMATCHED_PASSWORDS["password_repeat"]
         )
 
-        expect(page).to_have_url(re.compile(r".*/auth/forget-password.*"), timeout=5000)
+        expect(page).to_have_url(re.compile(r".*/auth/forget-password.*"))
     
     # ─── TC-05: NEGATIVE - Go Back to Login link ──────────
     
@@ -96,6 +96,4 @@ class TestForgotPassword:
         forgot_page.navigate()
         
         forgot_page.click_login_link()
-        page.wait_for_load_state("networkidle")
-        
-        expect(page).to_have_url(re.compile(r".*/auth/login.*"), timeout=5000)
+        expect(page).to_have_url(re.compile(r".*/auth/login.*"))

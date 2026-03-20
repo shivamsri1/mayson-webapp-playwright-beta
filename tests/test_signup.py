@@ -15,7 +15,7 @@ import pytest
 import re
 from playwright.sync_api import expect
 from pages.signup_page import SignupPage
-from config.testdata import (
+from data.testdata import (
     SIGNUP_VALID,
     SIGNUP_EXISTING_EMAIL,
     SIGNUP_MISMATCHED_PASSWORDS,
@@ -51,10 +51,8 @@ class TestSignup:
             confirm_password=SIGNUP_VALID["password_repeat"],
         )
 
-        page.wait_for_load_state("networkidle")
-
         # After signup, user should be redirected
-        expect(page).not_to_have_url(re.compile(r".*/auth/signup.*"), timeout=15000)
+        expect(page).not_to_have_url(re.compile(r".*/auth/signup.*"))
 
     # ─── TC-02: NEGATIVE - Already Registered Email ──────
 
@@ -80,8 +78,7 @@ class TestSignup:
             confirm_password=SIGNUP_EXISTING_EMAIL["password_repeat"],
         )
 
-        assert signup_page.is_error_visible(), \
-            "Expected error for duplicate email, but none appeared"
+        signup_page.expect_error_visible()
 
     # ─── TC-03: NEGATIVE - Password Mismatch ─────────────
 
@@ -107,7 +104,7 @@ class TestSignup:
             confirm_password=SIGNUP_MISMATCHED_PASSWORDS["password_repeat"],
         )
 
-        expect(page).to_have_url(re.compile(r".*/auth/signup.*"), timeout=5000)
+        expect(page).to_have_url(re.compile(r".*/auth/signup.*"))
 
     # ─── TC-04: NEGATIVE - Empty Fields ──────────────────
 
@@ -133,7 +130,7 @@ class TestSignup:
             confirm_password=SIGNUP_EMPTY["password_repeat"],
         )
 
-        expect(page).to_have_url(re.compile(r".*/auth/signup.*"), timeout=5000)
+        expect(page).to_have_url(re.compile(r".*/auth/signup.*"))
 
     # ─── TC-05: NEGATIVE - Weak Password ─────────────────
 
@@ -159,4 +156,4 @@ class TestSignup:
             confirm_password=SIGNUP_WEAK_PASSWORD["password_repeat"],
         )
 
-        expect(page).to_have_url(re.compile(r".*/auth/signup.*"), timeout=5000)
+        expect(page).to_have_url(re.compile(r".*/auth/signup.*"))

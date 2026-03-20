@@ -14,9 +14,10 @@ from dotenv import load_dotenv
 
 def load_environment(env_name: str = "dev"):
     """Load the .env file for the given environment (dev or prod)."""
-    # Find the project root (where .env files live)
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    env_file = os.path.join(project_root, f".env.{env_name}")
+    # Find the project root (config and core are sibling directories)
+    core_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(core_dir)
+    env_file = os.path.join(project_root, "config", f".env.{env_name}")
 
     if not os.path.exists(env_file):
         raise FileNotFoundError(f"Environment file not found: {env_file}")

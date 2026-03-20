@@ -15,7 +15,7 @@ import json
 import os
 from typing import Any, Dict
 
-from . import settings
+from core import config as settings
 
 
 def _project_root() -> str:
@@ -28,7 +28,7 @@ def _load_json() -> Dict[str, Any]:
     - Prefer config/testdata.json if present (local overrides, not committed)
     - Fallback to config/testdata.json.example (committed defaults)
     """
-    config_dir = os.path.join(_project_root(), "config")
+    config_dir = os.path.join(_project_root(), "data")
     primary_path = os.path.join(config_dir, "testdata.json")
     fallback_path = os.path.join(config_dir, "testdata.json.example")
 
